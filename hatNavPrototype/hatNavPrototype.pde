@@ -165,17 +165,18 @@ void drawSimulatedLEDS(int numLEDS) {
       // Map Viewrange to LED index
       int LEDindex = int(map(deltaAng, 180-45, 180+45, numLEDS-1, 0));
 
-      println(deltaAng, LEDindex, userHeading);
+      // Get distance to way point
       float distance = sqrt(  pow(mouseX-waypoints[crntWaypoint][0], 2) +
                               pow(mouseY-waypoints[crntWaypoint][1], 2));
 
-      // Brightness of LEDs are protional to distance and number of LEDS
-      int proximityFactor =  400;   // The higher this number, 
+      // The higher this number, the more LEDS light up as one approaches a waypoint
+      int proximityFactor =  400;   
       
+      // Brightness of LEDs are protional to distance and number of LEDS
       int grn = (int(proximityFactor/distance) - abs(LEDindex-i))*51;
       fill(0, grn, 0);
 
-      // Ensure the LED most directly face the way point is fully lit
+      // Ensure the LED most directly facing the way point is fully lit
       if (i == LEDindex)
          fill(0, 255, 0);
 
