@@ -4,7 +4,7 @@
  * Most of the magic happens in the function "drawSimulatedLEDS()"
  */
 
-int numLEDS          = 9;  // Can be arbiturary, give a try
+int numLEDS          = 15; // Can be arbiturary, best with odd values
 int numWaypoints     = 5;  // Number of waypoints
 int crntWaypoint     = 0;  // Currently selected waypoint
 float WaypointRadius = 50; // Size of waypoints
@@ -22,10 +22,9 @@ float[][] waypoints = new float[numWaypoints][2];
 
 // Required function; code to be run once at startup
 void setup() {
-   size(1080, 1080);          // Set window size
-   background(gray);          // Set background to gray
-   // Use no outline around primitives
-   noStroke();
+   size(1080, 1080); // Set window size
+   background(gray); // Set background to gray
+   noStroke();       // Use no outline around primitives
 
    // Randomly Generate some waypoints
    for (int i = 0; i < numWaypoints; i++) {
@@ -109,8 +108,8 @@ void drawLegend(){
 void drawWaypoints(){
    textAlign(CENTER, CENTER);
    textSize(32);
-
    noStroke();
+
    for (int i = 0; i < numWaypoints; i++) {     
       // Set color to purple
       fill(purple);
@@ -126,9 +125,7 @@ void drawWaypoints(){
 float getAng(float px, float py, float qx, float qy) {
    float xDelta = qx-px;
    float yDelta = qy-py;
-   float ang = atan2(yDelta, xDelta);
-
-   return ang;
+   return atan2(yDelta, xDelta);
 }
 
 void keyPressed() {
@@ -146,9 +143,9 @@ void keyPressed() {
       userHeading += 360;
 }
 
-void drawSimulatedLEDS(int n) {
-   for (int i = 0; i < n; i++) {
-      float xPos = map(i, 0, n, width/10, width-width/20);
+void drawSimulatedLEDS(int numLEDS) {
+   for (int i = 0; i < numLEDS; i++) {
+      float xPos = map(i, 0, numLEDS, width/10, width-width/20);
       noStroke();
 
       // Get angle between mouse position and next waypoint
@@ -164,20 +161,22 @@ void drawSimulatedLEDS(int n) {
       // keep deltaAng < 360
       if (deltaAng > 360)
          deltaAng -= 360;
-      int LED = int(map(deltaAng, 180-45, 180+45, n-1, 0));
 
-      println(deltaAng, LED, userHeading);
+      // Map Viewrange to LED index
+      int LEDindex = int(map(deltaAng, 180-45, 180+45, numLEDS-1, 0));
+
+      println(deltaAng, LEDindex, userHeading);
       float distance = sqrt(  pow(mouseX-waypoints[crntWaypoint][0], 2) +
                               pow(mouseY-waypoints[crntWaypoint][1], 2));
 
       // Brightness of LEDs are protional to distance and number of LEDS
       int proximityFactor =  400;   // The higher this number, 
       
-      int grn = (int(proximityFactor/distance) - abs(LED-i))*51;
+      int grn = (int(proximityFactor/distance) - abs(LEDindex-i))*51;
       fill(0, grn, 0);
 
       // Ensure the LED most directly face the way point is fully lit
-      if (i == LED)
+      if (i == LEDindex)
          fill(0, 255, 0);
 
       // Draw "LED"
