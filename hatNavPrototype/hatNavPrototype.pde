@@ -24,10 +24,10 @@ float[][] waypoints = new float[numWaypoints][2];
 // Required function; code to be run once at startup
 void setup() {
   pixelDensity(displayDensity());
-  size(1080, 1080); // Set window size
-  background(black); // Set background to gray
-  noStroke();       // Use no outline around primitives
-
+  size(720, 720);     // Set window size
+  background(black);  // Set background to gray
+  noStroke();         // Use no outline around primitives
+  
   // Randomly Generate some waypoints
   for (int i = 0; i < numWaypoints; i++) {
     waypoints[i][0] = random(100, width-100);
@@ -134,10 +134,10 @@ void keyPressed() {
   if (key == CODED) {
     switch (keyCode) {
     case LEFT:  
-      userHeading -= 15; 
+      userHeading -= 10; 
       break;
     case RIGHT: 
-      userHeading += 15; 
+      userHeading += 10; 
       break;
     }
   }
@@ -153,6 +153,7 @@ void drawSimulatedLEDS(int numLEDS) {
   for (int i = 0; i < numLEDS; i++) {
     float xPos = map(i, 0, numLEDS, width/10, width-width/20);
     stroke(gray);
+    strokeWeight(1);
 
     // Get angle between mouse position and next waypoint
     float direction = degrees(getAng(
