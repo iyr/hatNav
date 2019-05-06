@@ -4,7 +4,7 @@
  * Most of the magic happens in the function "drawSimulatedLEDS()"
  */
 
-int numLEDS          = 15; // Can be arbiturary, best with odd values
+int numLEDS          = 15; // Can be arbitrary, best with odd values
 int numWaypoints     = 5;  // Number of waypoints
 int crntWaypoint     = 0;  // Currently selected waypoint
 float WaypointRadius = 50; // Size of waypoints
@@ -151,41 +151,43 @@ void keyPressed() {
 
 void drawSimulatedLEDS(int numLEDS) {
   for (int i = 0; i < numLEDS; i++) {
+    // Draw LEDS along bottom of screen with thin gray outline
     float xPos = map(i, 0, numLEDS, width/10, width-width/20);
     stroke(gray);
     strokeWeight(1);
 
     // Get angle between mouse position and next waypoint
     float direction = degrees(getAng(
-      mouseX, // Substitutes GPS Coordinate
-      mouseY, // Substitutes GPS Coordinate
-      waypoints[crntWaypoint][0], 
-      waypoints[crntWaypoint][1]));
+      mouseX,                         // Substitutes X Coordinate of user
+      mouseY,                         // Substitutes Y Coordinate of user
+      waypoints[crntWaypoint][0],     // X coordinate of current waypoint
+      waypoints[crntWaypoint][1]) );  // Y coordinate of current waypoint
 
-    // Get difference betwen direction and heading of user, map to LED
+    // Get angular difference between direction and heading of user
     int deltaAng = int(abs(userHeading-direction+180));
 
     // keep deltaAng < 360
     if (deltaAng > 360)
       deltaAng -= 360;
 
-    // Map Viewrange to LED index
+    // Map Viewer Azimuth to LED strip
     int LEDindex = int(map(deltaAng, 180-45, 180+45, numLEDS-1, 0));
 
-    // Get distance to way point
-    float distance = sqrt(  pow(mouseX-waypoints[crntWaypoint][0], 2) +
-      pow(mouseY-waypoints[crntWaypoint][1], 2));
+    // Get distance to waypoint from current position
+    float distance = sqrt(  
+      pow(mouseX-waypoints[crntWaypoint][0], 2)+
+      pow(mouseY-waypoints[crntWaypoint][1], 2) );
 
     // The higher this number, the more LEDS light up as one approaches a waypoint
     int proximityFactor =  400;   
 
-    // Brightness of LEDs are protional to distance and number of LEDS
+    // Set LED brightness proportional to distance to waypoint and number of LEDS
     int grn = (int(proximityFactor/distance) - abs(LEDindex-i))*51;
     fill(0, grn, 0);
 
-    // Ensure the LED most directly facing the way point is fully lit
+    // Ensure the LED most directly facing the waypoint is always fully lit
     if (i == LEDindex)
-      fill(0, 255, 0);
+      fill(green);
 
     // Draw "LED"
     circle(xPos, height-40, 40);
